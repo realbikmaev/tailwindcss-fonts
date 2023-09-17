@@ -48,6 +48,8 @@ function findUsedFontFaces(rootSrcDir = "./src") {
     return used;
 }
 
+const request = require("sync-request");
+
 function createFontFaceAtRule(fontName, fontStyle, fontWeight) {
     if (fontStyle === "i") {
         fontStyle = "italic";
@@ -58,18 +60,40 @@ function createFontFaceAtRule(fontName, fontStyle, fontWeight) {
     fontWeight = parseInt(fontWeight);
     let fontNameExact = fonts[fontName][fontStyle][fontWeight];
     let url = fontFaceUrl(fontNameExact, fontStyle, fontWeight);
-    console.log(url);
-    return atRule;
+
+    let fontFace = undefined;
+
+    const res = request("GET", url);
+    fontFace = res.getBody("utf8");
+    console.log(fontFace);
+
+    fontFace = postcssjs.objectify(postcss.parse(fontFace));
+
+    console.log("here fontFace");
+    console.log(fontFace);
+
+    let atRule = {
+        "@import": {
+            url: url,
+        },
+    };
+    return fontFace;
 }
 
 function createFontFaceAtRules(used) {
-    let atRules = {};
+    atRules = {};
     Object.keys(used).forEach((className_) => {
         let [fontName, fontStyle, fontWeight] = used[className_];
         let atRule = createFontFaceAtRule(fontName, fontStyle, fontWeight);
-        atRules[atRule] = true;
+        atRules[Object.keys(atRule)[0]] = Object.values(atRule)[0];
+        console.log("created atRule");
+        console.log(atRule);
     });
+
     return atRules;
+
+    // console.log(atRules.join("\n"));
+    // return postcssjs.objectify(postcss.parse(atRules.join("\n")));
 }
 
 function fontFaceUrl(fontName, fontStyle, fontWeight) {
@@ -85,7 +109,7 @@ function fontFaceUrl(fontName, fontStyle, fontWeight) {
         url += `${fontWeight}`;
     }
 
-    return `@import url('${url}');`;
+    return url;
 }
 
 function createUtilities() {
