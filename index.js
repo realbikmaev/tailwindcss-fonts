@@ -3,10 +3,10 @@ let extract = require("./extract");
 
 module.exports = plugin(function ({ addUtilities, addBase }) {
     let utilities = extract.createUtilities();
-    console.log(utilities);
     addUtilities(utilities);
-    let fontFaces = extract.findUsedFontFaces();
-    let atRules = extract.createFontFaceAtRules(fontFaces);
-    console.log(atRules);
-    addBase(atRules);
+    console.log("imported utilities");
+    // let fontFaces = extract.findUsedFontFaces();
+    // let atRules = extract.createFontFaceAtRules(fontFaces);
+    // console.log(atRules);
+    // addBase(atRules);
 });

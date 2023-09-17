@@ -88,19 +88,25 @@ function fontFaceUrl(fontName, fontStyle, fontWeight) {
 
 function createUtilities() {
     let utilities = {};
-    Object.keys(fonts).forEach((fontName) => {
-        let variants = fonts[fontName];
-        Object.keys(variants).forEach((fontStyle) => {
-            let variant = fonts[fontName][fontStyle];
-            Object.keys(variant).forEach((fontWeight) => {
+    const fontNames = Object.keys(fonts);
+    for (let i = 0; i < fontNames.length; i++) {
+        const fontName = fontNames[i];
+        const variants = fonts[fontName];
+        const fontStyles = Object.keys(variants);
+        for (let j = 0; j < fontStyles.length; j++) {
+            const fontStyle = fontStyles[j];
+            const variant = variants[fontStyle];
+            const fontWeights = Object.keys(variant);
+            for (let k = 0; k < fontWeights.length; k++) {
+                const fontWeight = fontWeights[k];
                 utilities[className(fontName, fontStyle, fontWeight)] = {
                     "font-family": fontName,
                     "font-weight": fontWeight,
                     "font-style": fontStyle === "i" ? "italic" : "normal",
                 };
-            });
-        });
-    });
+            }
+        }
+    }
     return utilities;
 }
 
