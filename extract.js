@@ -40,7 +40,6 @@ function findUsedFontFaces(rootSrcDir = "./src") {
             }
         } catch (err) {
             if (err.code === "EISDIR") {
-                console.error(err);
                 continue;
             }
         }
@@ -59,14 +58,7 @@ function createFontFaceAtRule(fontName, fontStyle, fontWeight) {
     fontWeight = parseInt(fontWeight);
     let fontNameExact = fonts[fontName][fontStyle][fontWeight];
     let url = fontFaceUrl(fontNameExact, fontStyle, fontWeight);
-    let fontFace = "";
     console.log(url);
-
-    let atRule = postcss.atRule({
-        name: "import",
-        params: url,
-    });
-
     return atRule;
 }
 
@@ -75,7 +67,7 @@ function createFontFaceAtRules(used) {
     Object.keys(used).forEach((className_) => {
         let [fontName, fontStyle, fontWeight] = used[className_];
         let atRule = createFontFaceAtRule(fontName, fontStyle, fontWeight);
-        atRules[fontName] = atRule;
+        atRules[atRule] = true;
     });
     return atRules;
 }
@@ -93,7 +85,7 @@ function fontFaceUrl(fontName, fontStyle, fontWeight) {
         url += `${fontWeight}`;
     }
 
-    return `url("${url}")`;
+    return `@import url('${url}');`;
 }
 
 function createUtilities() {
