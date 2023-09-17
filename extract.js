@@ -26,18 +26,25 @@ function findUsedFontFaces(rootSrcDir = "./src") {
     let files = walkdir.sync(rootSrcDir);
 
     used = {};
-    files.forEach((file) => {
-        const fileContent = fs.readFileSync(file, "utf8");
-        const lines = fileContent.split("\n");
-        lines.forEach((line) => {
-            let matches = line.match(classNameRegex);
-            if (matches) {
-                let [_, fontName, fontWeight, fontStyle] = matches;
-                let className_ = className(fontName, fontStyle, fontWeight);
-                used[className_] = [fontName, fontStyle, fontWeight];
+    for (let i = 0; i < files.length; i++) {
+        try {
+            const fileContent = fs.readFileSync(files[i], "utf8");
+            const lines = fileContent.split("\n");
+            for (let j = 0; j < lines.length; j++) {
+                let matches = lines[j].match(classNameRegex);
+                if (matches) {
+                    let [_, fontName, fontWeight, fontStyle] = matches;
+                    let className_ = className(fontName, fontStyle, fontWeight);
+                    used[className_] = [fontName, fontStyle, fontWeight];
+                }
             }
-        });
-    });
+        } catch (err) {
+            if (err.code === "EISDIR") {
+                console.error(err);
+                continue;
+            }
+        }
+    }
 
     return used;
 }
@@ -53,10 +60,13 @@ function createFontFaceAtRule(fontName, fontStyle, fontWeight) {
     let fontNameExact = fonts[fontName][fontStyle][fontWeight];
     let url = fontFaceUrl(fontNameExact, fontStyle, fontWeight);
     let fontFace = "";
-    fetch(url).then((res) => {
-        fontFace = res.text();
+    console.log(url);
+
+    let atRule = postcss.atRule({
+        name: "import",
+        params: url,
     });
-    let atRule = postcssjs.objectify(postcss.parse(fontFace));
+
     return atRule;
 }
 
