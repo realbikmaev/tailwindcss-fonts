@@ -94,17 +94,20 @@ def create_utils(fonts: Fonts):
         for font_style in variants.keys():
             variant = variants[font_style]
             for font_weight, exact_name in variant.items():
-                utils[class_name(font_name, font_style, font_weight)] = {
+                clazz = class_name(font_name, font_style, font_weight)
+                utils[clazz] = {
                     "font-family": exact_name,
                     "font-weight": font_weight,
-                    "font-style": "italic" if font_style == "i" else "normal",
+                    "font-style": "italic"
+                    if font_style in ["i", "italic"]
+                    else "normal",
                 }
     return utils
 
 
 def font_face_url(font_name: str, font_style: str, font_weight: int):
     url = f"https://fonts.googleapis.com/css2?family={font_name.replace(' ', '+')}"
-    if font_style == "i":
+    if font_style in ["italic", "i"]:
         url += ":ital,wght@"
         url += f"1,{font_weight}"
     else:
