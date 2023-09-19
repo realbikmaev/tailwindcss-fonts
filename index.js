@@ -63,10 +63,9 @@ module.exports = plugin(function ({ addUtilities, addBase }) {
         }
     }
 
-    let utils = JSON.parse(fs.readFileSync("./utils.json", "utf8"));
+    let utils = require("./utils.json");
     addUtilities(utils);
     let usedFontFaces = findUsedFontFaces("./src");
-    fs.writeFileSync("./used.json", JSON.stringify(usedFontFaces));
-    let fontFaces = JSON.parse(fs.readFileSync("./fonts.json", "utf8"));
+    let fontFaces = require("./fonts.json");
     getAtRules(fontFaces, usedFontFaces, addBase);
 });
