@@ -1,4 +1,12 @@
--   production build where we put fonts that are actually used into a lockfile
--   using [data-uris](https://css-tricks.com/data-uris/) we can inline the fonts to achieve instant loading
--   another cool thing is to use css2?text= option where we first gather all the letters we actually use and then generate a font with only those letters
--   caching of requests to google fonts
+-   production build where we put fonts that are actually used into a lockfile or load em into static/ folder
+-   using [data-uris](https://css-tricks.com/data-uris/) we can inline the fonts to get instant loading which i guess improves UX and Web Vitals
+-   another cool thing is to use `css2?text=` option where we first gather all the letters we actually use and then generate a font with only those letters
+-   resolve issue with svelte preprocess and vite shenanigans where only changes to `tailwind.config.js` or `app.css` trigger page reload that updates the fonts
+    -   also another question is why the fuck do we need full reload to load fonts and can't regular HMR handle that?
+-   setup ci that runs bash extract.sh daily
+-   write proper README lmao
+-   handle these fonts manually for some reason our `extract.py` ain't picking em up
+    -   [Open Sans](https://fonts.google.com/specimen/Open+Sans)
+    -   [Noto Sans](https://fonts.google.com/noto/specimen/Noto+Sans)
+    -   [Roboto](https://fonts.google.com/specimen/Roboto)
+-   another problem is we fuck up handling of variable fonts like [Inter](https://fonts.google.com/specimen/Inter?sort=popularity) where we create only `font-Inter-400`
